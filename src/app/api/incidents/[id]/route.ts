@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(params.id);
-    if (isNaN(id)) {
+    const incidentId = parseInt(params.id);
+    
+    if (isNaN(incidentId)) {
       return NextResponse.json(
         { error: 'Invalid incident ID' },
         { status: 400 }
@@ -17,10 +16,8 @@ export async function GET(
     }
 
     const incident = await prisma.incident.findUnique({
-      where: { id },
-      include: {
-        camera: true
-      }
+      where: { id: incidentId },
+      include: { camera: true },
     });
 
     if (!incident) {

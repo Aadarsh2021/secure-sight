@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function PATCH(
   request: Request,
@@ -18,15 +16,9 @@ export async function PATCH(
     }
 
     const updatedIncident = await prisma.incident.update({
-      where: {
-        id: incidentId,
-      },
-      data: {
-        resolved: true,
-      },
-      include: {
-        camera: true,
-      },
+      where: { id: incidentId },
+      data: { resolved: true },
+      include: { camera: true },
     });
 
     return NextResponse.json(updatedIncident);

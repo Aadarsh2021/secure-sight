@@ -1,133 +1,176 @@
-# SecureSight - AI-Powered CCTV Monitoring
+# SecureSight - CCTV Monitoring Dashboard
 
-SecureSight is a next-generation CCTV monitoring system that uses computer vision models to detect and prevent security threats in real-time. This project includes both the main dashboard for monitoring incidents and a 3D landing page showcasing the product features.
+A comprehensive CCTV monitoring software dashboard built with Next.js 15, featuring real-time incident detection, video feeds, and interactive timeline visualization.
 
-## Features
+![SecureSight Dashboard](https://img.shields.io/badge/Status-Complete-green)
+![Next.js](https://img.shields.io/badge/Next.js-15.4.2-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Prisma](https://img.shields.io/badge/Prisma-6.12.0-purple)
 
-### Main Dashboard
-- Real-time incident monitoring with camera feeds
-- Incident list with threat categorization and timestamps
-- Interactive timeline for navigating through incidents
-- One-click incident resolution with optimistic UI updates
-- Dark mode support
+## 🎯 Features
 
-### 3D Landing Page
-- Interactive 3D product showcase using React Three Fiber
-- Animated feature highlights with custom shaders
-- Responsive design with mobile support
-- Dynamic lighting and particle effects
+### Mandatory Features ✅
+- **Navbar**: MANDLACX branding with navigation links and user profile
+- **Incident Player**: Large video feed with timestamp overlay and mini camera strip
+- **Incident List**: Right panel with incident thumbnails, colored type icons, and resolve buttons
+- **Database**: SQLite with Prisma ORM
+- **API Routes**: RESTful endpoints for incident management
+- **Seed Data**: 3 cameras + 15+ incidents across multiple threat types
 
-## Tech Stack
+### Optional Features ✅
+- **Interactive Timeline**: 24-hour ruler with draggable scrubber and incident markers
+- **Optimistic UI**: Smooth resolve button interactions
+- **Dark Theme**: Modern, professional interface matching Figma design
 
-- **Frontend Framework**: Next.js 15 with App Router
-- **Styling**: TailwindCSS for utility-first styling
-- **Database**: Prisma with SQLite (easily switchable to PostgreSQL/MySQL)
-- **3D Graphics**: React Three Fiber + Drei for 3D rendering
-- **Animation**: React Spring for smooth animations
-- **Type Safety**: TypeScript for better developer experience
+## 🚀 Deployment Instructions
 
-## Getting Started
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-1. Clone the repository:
+### Local Development
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd securesight
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+
+# Generate Prisma client
+npx prisma generate
+
+# Run database migrations
+npx prisma migrate dev
+
+# Seed the database
+npx prisma db seed
+
+# Start development server
+npm run dev
+```
+
+### Production Deployment (Vercel)
+
+1. **Connect to Vercel**:
    ```bash
-   git clone https://github.com/yourusername/securesight.git
-   cd securesight
+   npm install -g vercel
+   vercel login
+   vercel
    ```
 
-2. Install dependencies:
-   ```bash
-   npm install
+2. **Environment Variables** (set in Vercel dashboard):
+   ```
+   DATABASE_URL="file:./dev.db"
    ```
 
-3. Set up the database:
-   ```bash
-   npx prisma migrate dev
-   npx prisma db seed
-   ```
-
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Deployment
-
-### Vercel Deployment
-1. Push your code to GitHub
-2. Import your repository in Vercel
-3. Add the following environment variables:
-   - `DATABASE_URL`: Your database connection string
-4. Deploy!
-
-### Manual Deployment
-1. Build the project:
+3. **Build Commands** (auto-detected by Vercel):
    ```bash
    npm run build
-   ```
-
-2. Start the production server:
-   ```bash
    npm start
    ```
 
-## Technical Decisions
+### Alternative Deployment (Netlify/Render)
 
-1. **Next.js App Router**: Chosen for its file-based routing, server components, and built-in optimizations.
+1. **Build Command**: `npm run build`
+2. **Publish Directory**: `.next`
+3. **Environment Variables**: Same as above
 
-2. **SQLite Database**: 
-   - Perfect for development and small to medium deployments
-   - Easy to switch to PostgreSQL/MySQL for production
-   - Zero-config setup with file-based storage
+## 🛠 Tech Decisions
 
-3. **Prisma ORM**:
-   - Type-safe database queries
-   - Easy schema migrations
-   - Great developer experience with auto-completion
+### Frontend Framework
+- **Next.js 15 App Router**: Chosen for its modern architecture, built-in API routes, and excellent TypeScript support
+- **TypeScript**: For type safety and better developer experience
+- **TailwindCSS**: For rapid UI development and consistent design system
 
-4. **React Three Fiber**:
-   - Declarative 3D rendering in React
-   - Excellent performance with WebGL
-   - Rich ecosystem with Drei helpers
+### Database & ORM
+- **SQLite**: Lightweight, file-based database perfect for development and small-scale deployments
+- **Prisma ORM**: Type-safe database client with excellent migration and seeding capabilities
+- **Local File Storage**: Simple and reliable for assessment purposes
 
-5. **TailwindCSS**:
-   - Utility-first approach for rapid development
-   - Built-in dark mode support
-   - Easy responsive design
+### State Management
+- **React Hooks**: Local state management with useState and useEffect
+- **Optimistic Updates**: Immediate UI feedback for better user experience
+- **Server State**: Direct API calls with error handling
 
-## Future Improvements
+### UI/UX Design
+- **Dark Theme**: Professional appearance suitable for security monitoring
+- **Responsive Design**: Works across different screen sizes
+- **Interactive Elements**: Hover states, transitions, and visual feedback
+- **Accessibility**: Semantic HTML and keyboard navigation support
 
-1. **Performance**:
-   - Implement WebSocket for real-time updates
-   - Add Redis caching for frequently accessed data
-   - Optimize 3D models and textures
+### API Design
+- **RESTful Endpoints**: Simple and intuitive API structure
+- **Query Parameters**: Flexible filtering (e.g., `?resolved=false`)
+- **Error Handling**: Proper HTTP status codes and error messages
+- **Type Safety**: Full TypeScript integration
 
-2. **Features**:
-   - Add user authentication and role-based access
-   - Implement incident categorization with ML
-   - Add custom alert rules and notifications
-   - Support for multiple camera layouts
+## 🔮 If I Had More Time...
 
-3. **Developer Experience**:
-   - Add comprehensive test suite
-   - Implement CI/CD pipeline
-   - Add Storybook for component documentation
+### Performance Optimizations
+- Implement React Query/SWR for better caching and data synchronization
+- Add virtual scrolling for large incident lists
+- Optimize image loading with Next.js Image component
+- Implement service workers for offline functionality
 
-4. **UX Enhancements**:
-   - Add more interactive 3D features
-   - Implement advanced video controls
-   - Add export and reporting features
-   - Enhance mobile responsiveness
+### Enhanced Features
+- Real-time WebSocket connections for live incident updates
+- Advanced filtering and search capabilities
+- Export functionality (PDF reports, CSV data)
+- User authentication and role-based access control
+- Multi-language support
 
-## Contributing
+### Technical Improvements
+- Add comprehensive unit and integration tests
+- Implement proper error boundaries and fallback UI
+- Add logging and monitoring (Sentry, LogRocket)
+- Database connection pooling for production
+- Implement proper CORS and security headers
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a pull request
+### UI/UX Enhancements
+- Add keyboard shortcuts for power users
+- Implement drag-and-drop for incident management
+- Add customizable dashboard layouts
+- Implement dark/light theme toggle
+- Add onboarding tutorial for new users
 
-## License
+### Infrastructure
+- Set up CI/CD pipeline with GitHub Actions
+- Implement automated testing and deployment
+- Add database backups and recovery procedures
+- Set up monitoring and alerting systems
+- Implement proper logging and analytics
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 📁 Project Structure
+
+```
+securesight/
+├── prisma/                 # Database schema and migrations
+├── src/
+│   ├── app/               # Next.js App Router pages
+│   │   ├── api/           # API routes
+│   │   └── page.tsx       # Main dashboard
+│   └── components/        # React components
+├── public/                # Static assets
+└── README.md             # This file
+```
+
+## 🎨 Design Implementation
+
+The dashboard is an exact replica of the provided Figma design, featuring:
+- **MANDLACX** branding and navigation
+- **15 unresolved incidents** with proper timestamps
+- **4 resolved incidents** counter
+- **Interactive timeline** with camera-specific incident markers
+- **Professional dark theme** with proper contrast and accessibility
+
+## 📝 License
+
+This project is created for technical assessment purposes.
+
+---
+
+**Built with ❤️ using Next.js, TypeScript, and Prisma**

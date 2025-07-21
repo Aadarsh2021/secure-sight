@@ -24,6 +24,8 @@ export default function Home() {
   const [incidents, setIncidents] = useState<IncidentWithCamera[]>([]);
   const [selectedIncident, setSelectedIncident] = useState<IncidentWithCamera | null>(null);
   const [otherCameras, setOtherCameras] = useState<Camera[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch incidents
   useEffect(() => {
@@ -32,8 +34,24 @@ export default function Home() {
 
   const fetchIncidents = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      
       const response = await fetch('/api/incidents?resolved=false');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
+      
+      // Check if data is an array (success) or has error property
+      if (!Array.isArray(data)) {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        throw new Error('Invalid response format');
+      }
       
       // Add default thumbnails if missing
       const processedData = data.map((incident: IncidentWithCamera) => ({
@@ -58,6 +76,9 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Failed to fetch incidents:', error);
+      setError(error instanceof Error ? error.message : 'Failed to fetch incidents');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,6 +142,37 @@ export default function Home() {
       handleIncidentSelect(closestIncident);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading incidents...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-center">
+            <p className="text-red-400 mb-4">Error: {error}</p>
+            <button 
+              onClick={fetchIncidents}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
