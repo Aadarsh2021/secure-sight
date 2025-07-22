@@ -1,176 +1,225 @@
-# SecureSight - CCTV Monitoring Dashboard
+# 🎯 SecureSight - CCTV Monitoring Dashboard
 
-A comprehensive CCTV monitoring software dashboard built with Next.js 15, featuring real-time incident detection, video feeds, and interactive timeline visualization.
+A modern, real-time CCTV monitoring dashboard built with Next.js 15, TypeScript, and Prisma. Features computer vision threat detection with a professional dark-themed UI.
 
-![SecureSight Dashboard](https://img.shields.io/badge/Status-Complete-green)
-![Next.js](https://img.shields.io/badge/Next.js-15.4.2-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![Prisma](https://img.shields.io/badge/Prisma-6.12.0-purple)
+## 🚀 Live Demo
 
-## 🎯 Features
+**Dashboard**: [https://secure-sight-2xdn3np7l-aadarsh2021s-projects.vercel.app/](https://secure-sight-2xdn3np7l-aadarsh2021s-projects.vercel.app/)
 
-### Mandatory Features ✅
-- **Navbar**: MANDLACX branding with navigation links and user profile
-- **Incident Player**: Large video feed with timestamp overlay and mini camera strip
-- **Incident List**: Right panel with incident thumbnails, colored type icons, and resolve buttons
-- **Database**: SQLite with Prisma ORM
-- **API Routes**: RESTful endpoints for incident management
-- **Seed Data**: 3 cameras + 15+ incidents across multiple threat types
+## 📋 Features
 
-### Optional Features ✅
-- **Interactive Timeline**: 24-hour ruler with draggable scrubber and incident markers
-- **Optimistic UI**: Smooth resolve button interactions
-- **Dark Theme**: Modern, professional interface matching Figma design
+### ✅ **Mandatory Scope (Complete)**
+- **Navbar**: Professional navigation with MANDLACX branding
+- **Incident Player**: Large video frame with timestamp overlay and camera selection
+- **Incident List**: Thumbnail-based list with resolve functionality and optimistic UI
 
-## 🚀 Deployment Instructions
+### ✅ **Optional Scope (Complete)**
+- **Incident Timeline**: 24-hour timeline with camera-specific incident markers
+- **Professional UI**: Exact Figma design replication with dark theme
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+## 🛠️ Tech Stack
 
-### Local Development
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd securesight
+- **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: PostgreSQL (cloud) / SQLite (local development)
+- **Styling**: Tailwind CSS with custom dark theme
+- **Icons**: Heroicons
+- **Date Handling**: date-fns
 
-# Install dependencies
-npm install
+## 🗄️ Database Schema
 
-# Set up environment variables
-cp .env.example .env
+```prisma
+model Camera {
+  id       Int        @id @default(autoincrement())
+  name     String
+  location String
+  incidents Incident[]
+}
 
-# Generate Prisma client
-npx prisma generate
-
-# Run database migrations
-npx prisma migrate dev
-
-# Seed the database
-npx prisma db seed
-
-# Start development server
-npm run dev
+model Incident {
+  id           Int      @id @default(autoincrement())
+  cameraId     Int
+  type         String
+  tsStart      DateTime
+  tsEnd        DateTime
+  thumbnailUrl String
+  resolved     Boolean  @default(false)
+  camera       Camera   @relation(fields: [cameraId], references: [id])
+}
 ```
 
-### Production Deployment (Vercel)
+## 🚀 Quick Start
 
-1. **Connect to Vercel**:
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Git
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Aadarsh2021/secure-sight.git
+   cd secure-sight
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   # For local development (SQLite)
+   echo "DATABASE_URL=\"file:./dev.db\"" > .env
+   
+   # For production (PostgreSQL)
+   echo "DATABASE_URL=\"postgresql://username:password@host:port/database\"" > .env
+   ```
+
+4. **Set up the database**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   npx prisma db seed
+   ```
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🌐 Deployment
+
+### Vercel Deployment (Recommended)
+
+1. **Set up a cloud database** (required for Vercel):
+   - **Option A**: [Neon](https://neon.tech) (PostgreSQL)
+   - **Option B**: [PlanetScale](https://planetscale.com) (MySQL)
+   - **Option C**: [Supabase](https://supabase.com) (PostgreSQL)
+
+2. **Deploy to Vercel**:
    ```bash
    npm install -g vercel
-   vercel login
    vercel
    ```
 
-2. **Environment Variables** (set in Vercel dashboard):
+3. **Configure environment variables in Vercel**:
    ```
-   DATABASE_URL="file:./dev.db"
-   ```
-
-3. **Build Commands** (auto-detected by Vercel):
-   ```bash
-   npm run build
-   npm start
+   DATABASE_URL="your-cloud-database-url"
    ```
 
-### Alternative Deployment (Netlify/Render)
+4. **Initialize the database**:
+   Visit: `https://your-app.vercel.app/api/seed`
 
-1. **Build Command**: `npm run build`
-2. **Publish Directory**: `.next`
-3. **Environment Variables**: Same as above
+### Alternative Deployments
 
-## 🛠 Tech Decisions
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions on:
+- Netlify deployment
+- Render deployment
+- Docker deployment
 
-### Frontend Framework
-- **Next.js 15 App Router**: Chosen for its modern architecture, built-in API routes, and excellent TypeScript support
-- **TypeScript**: For type safety and better developer experience
-- **TailwindCSS**: For rapid UI development and consistent design system
+## 📊 API Endpoints
 
-### Database & ORM
-- **SQLite**: Lightweight, file-based database perfect for development and small-scale deployments
-- **Prisma ORM**: Type-safe database client with excellent migration and seeding capabilities
-- **Local File Storage**: Simple and reliable for assessment purposes
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/incidents` | GET | Fetch incidents (supports `?resolved=false` filter) |
+| `/api/incidents/[id]` | GET | Fetch single incident |
+| `/api/incidents/[id]/resolve` | PATCH | Resolve an incident |
+| `/api/cameras` | GET | Fetch all cameras |
+| `/api/seed` | GET | Initialize database with sample data |
 
-### State Management
-- **React Hooks**: Local state management with useState and useEffect
-- **Optimistic Updates**: Immediate UI feedback for better user experience
-- **Server State**: Direct API calls with error handling
+## 🎨 UI Components
 
-### UI/UX Design
-- **Dark Theme**: Professional appearance suitable for security monitoring
-- **Responsive Design**: Works across different screen sizes
-- **Interactive Elements**: Hover states, transitions, and visual feedback
-- **Accessibility**: Semantic HTML and keyboard navigation support
+### Incident Player
+- Large video frame with timestamp overlay
+- Live indicator with camera label
+- Mini camera strip for quick switching
+- Responsive design with aspect ratio preservation
 
-### API Design
-- **RESTful Endpoints**: Simple and intuitive API structure
-- **Query Parameters**: Flexible filtering (e.g., `?resolved=false`)
-- **Error Handling**: Proper HTTP status codes and error messages
-- **Type Safety**: Full TypeScript integration
+### Incident List
+- Thumbnail-based incident cards
+- Color-coded threat type icons
+- Camera location and timestamp display
+- Optimistic UI for resolve actions
+- Hover effects and smooth transitions
 
-## 🔮 If I Had More Time...
+### Incident Timeline
+- 24-hour timeline with hour markers
+- Camera-specific incident visualization
+- Draggable time scrubber
+- Playback controls
+- Real-time current time indicator
 
-### Performance Optimizations
-- Implement React Query/SWR for better caching and data synchronization
-- Add virtual scrolling for large incident lists
-- Optimize image loading with Next.js Image component
-- Implement service workers for offline functionality
+## 🔧 Development
 
-### Enhanced Features
-- Real-time WebSocket connections for live incident updates
-- Advanced filtering and search capabilities
-- Export functionality (PDF reports, CSV data)
-- User authentication and role-based access control
-- Multi-language support
-
-### Technical Improvements
-- Add comprehensive unit and integration tests
-- Implement proper error boundaries and fallback UI
-- Add logging and monitoring (Sentry, LogRocket)
-- Database connection pooling for production
-- Implement proper CORS and security headers
-
-### UI/UX Enhancements
-- Add keyboard shortcuts for power users
-- Implement drag-and-drop for incident management
-- Add customizable dashboard layouts
-- Implement dark/light theme toggle
-- Add onboarding tutorial for new users
-
-### Infrastructure
-- Set up CI/CD pipeline with GitHub Actions
-- Implement automated testing and deployment
-- Add database backups and recovery procedures
-- Set up monitoring and alerting systems
-- Implement proper logging and analytics
-
-## 📁 Project Structure
-
+### Project Structure
 ```
-securesight/
-├── prisma/                 # Database schema and migrations
-├── src/
-│   ├── app/               # Next.js App Router pages
-│   │   ├── api/           # API routes
-│   │   └── page.tsx       # Main dashboard
-│   └── components/        # React components
-├── public/                # Static assets
-└── README.md             # This file
+src/
+├── app/                    # Next.js App Router
+│   ├── api/               # API routes
+│   ├── globals.css        # Global styles
+│   └── page.tsx           # Main dashboard
+├── components/            # React components
+│   ├── IncidentPlayer.tsx
+│   ├── IncidentList.tsx
+│   ├── IncidentTimeline.tsx
+│   └── Navbar.tsx
+└── lib/                   # Utilities
+    └── prisma.ts          # Prisma client singleton
 ```
 
-## 🎨 Design Implementation
+### Key Features
+- **Type Safety**: Full TypeScript implementation
+- **Error Handling**: Comprehensive error boundaries and fallbacks
+- **Performance**: Optimized builds with Next.js 15
+- **Responsive**: Mobile-first design approach
+- **Accessibility**: Semantic HTML and ARIA labels
 
-The dashboard is an exact replica of the provided Figma design, featuring:
-- **MANDLACX** branding and navigation
-- **15 unresolved incidents** with proper timestamps
-- **4 resolved incidents** counter
-- **Interactive timeline** with camera-specific incident markers
-- **Professional dark theme** with proper contrast and accessibility
+## 🎯 Assessment Requirements
+
+### ✅ **Completed Requirements**
+- [x] Public GitHub repository
+- [x] Production build success
+- [x] Live deployment URL
+- [x] Comprehensive documentation
+- [x] Database schema with relationships
+- [x] API endpoints for CRUD operations
+- [x] Professional UI matching Figma design
+- [x] Optimistic UI for better UX
+- [x] Error handling and loading states
+
+### 📋 **Technical Decisions**
+
+1. **Next.js 15 App Router**: Latest features and performance optimizations
+2. **Prisma ORM**: Type-safe database operations with auto-generated client
+3. **Tailwind CSS**: Utility-first styling for rapid development
+4. **SQLite (local) / PostgreSQL (production)**: Flexible database setup
+5. **TypeScript**: Enhanced developer experience and type safety
+6. **Vercel Deployment**: Optimized for Next.js with automatic builds
+
+## 🔮 Future Improvements
+
+- [ ] Real-time video streaming integration
+- [ ] User authentication and role-based access
+- [ ] Advanced filtering and search capabilities
+- [ ] Export functionality for incident reports
+- [ ] Mobile app development
+- [ ] AI-powered threat detection
+- [ ] Multi-tenant architecture
+- [ ] Performance monitoring and analytics
 
 ## 📝 License
 
 This project is created for technical assessment purposes.
 
+## 🤝 Contributing
+
+This is a technical assessment project. For questions or feedback, please open an issue on GitHub.
+
 ---
 
-**Built with ❤️ using Next.js, TypeScript, and Prisma**
+**Built with ❤️ using Next.js 15, TypeScript, and Prisma**
